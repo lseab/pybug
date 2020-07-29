@@ -1,0 +1,70 @@
+{% extends 'pybug/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <span style="float:left;">
+            <h2>Projects</h2>
+        </span>
+        <span style="float:right;">
+            <a type="button" class="btn btn-primary" href="{% url 'project-create' %}" role="button">New Project</a>
+        </span>
+    </div>
+    <div class="col-md-12">
+        <table class='table table-hover'>
+            <thead>
+                <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Key</th>
+                <th scope="col">Date created</th>
+                <th scope="col">Lead</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in projects %}
+                    <tr class='clickable-row' data-href="{% url 'project-detail' project.key project.project_tickets.last.id|default:0 %}?page={{ page_obj.number }}">
+                        <td>{{ project.name }}</td>
+                        <td>{{ project.key }}</td>
+                        <td>{{ project.date_created|date:"F d, Y" }}</td>
+                        <td>{{ project.lead.get_full_name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
+        {% if is_paginated %}
+
+            {% if page_obj.has_previous %}
+                <a class="btn-sm btn-outline-info mb-4" href="?page=1">First</a>
+                ...
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn-sm btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+                    <a class="btn-sm btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                ...
+                <a class="btn-sm btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+        
+        {% endif %}
+
+        </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="{% static 'pybug/scripts.js' %}"></script>
+<script>
+    $('form :input').blur(function() {
+        console.log($(this).closest('form'))
+        $(this).closest('form').submit();
+    });
+</script>
+
+{% endblock content %}

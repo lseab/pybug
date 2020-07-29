@@ -1,0 +1,23 @@
+[
+    {
+      "model": "pybug.priority",
+      "pk": 1,
+      "fields": {
+        "name": "Low"
+      }
+    },
+    {
+      "model": "pybug.priority",
+      "pk": 2,
+      "fields": {
+        "name": "Medium"
+      }
+    },
+    {
+      "model": "pybug.priority",
+      "pk": 3,
+      "fields": {
+        "name": "High"
+      }
+    }
+  ]
