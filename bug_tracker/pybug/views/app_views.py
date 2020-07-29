@@ -109,7 +109,7 @@ class UserTicketListView(ListView):
 
 class TicketCreateView(LoginRequiredMixin, CreateView):
     model = Ticket
-    fields = ['project', 'title', 'description', 'assignee']
+    fields = ['project', 'title', 'description', 'assignee', 'priority']
 
     def get_initial(self):
         initial = super().get_initial()
