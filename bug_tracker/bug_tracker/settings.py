@@ -20,13 +20,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'p7owm$8v0#cu$$9th=^c&oyc+poky&49#9+_j2=n@fq!bn)$th'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'changeme')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
 ALLOWED_HOSTS = ['*']
-
+# ALLOWED_HOSTS_ENV = os.environ.get('ALLOWED_HOSTS')
+# if ALLOWED_HOSTS_ENV:
+#     ALLOWED_HOSTS.extend(ALLOWED_HOSTS_ENV.split(','))
 
 # Application definition
 
@@ -80,8 +82,12 @@ WSGI_APPLICATION = 'bug_tracker.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER':os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST':os.environ.get('DB_HOST'),
+        'PORT': 5432
     }
 }
 
@@ -125,9 +131,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+STATIC_ROOT = '/vol/web/static'
+MEDIA_ROOT = '/vol/web/media'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -148,4 +155,23 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ]
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
 }
